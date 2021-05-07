@@ -19,11 +19,10 @@ class EmailService(val view: EmailFragmentView) {
                     call: Call<EmailSignUpResponse>,
                     response: Response<EmailSignUpResponse>
                 ) {
-                    Log.d("checkkk", "${response.code()}")
-                    Log.d("checkkk", response.message())
-                    Log.d("checkkk", "${response.body()}")
-                    if (response.isSuccessful) {
+                    if (response.body() != null) {
                         view.onPostEmailSignUpSuccess(response.body() as EmailSignUpResponse)
+                    } else {
+                        view.onPostEmailSignUpFailure(response.message())
                     }
                 }
 

@@ -9,18 +9,24 @@ import site.yoonsang.instaclone.src.main.profile.follow.following.models.Profile
 class ProfileFollowingService(val view: ProfileFollowingFragmentView) {
 
     fun tryGetFollowing(userId: Int) {
-        val profileFollowingRetrofitInterface = ApplicationClass.sRetrofit.create(ProfileFollowingRetrofitInterface::class.java)
-        profileFollowingRetrofitInterface.getFollowing(userId).enqueue(object : Callback<ProfileFollowingResponse> {
-            override fun onResponse(
-                call: Call<ProfileFollowingResponse>,
-                response: Response<ProfileFollowingResponse>
-            ) {
-                view.onGetFollowingSuccess(response.body() as ProfileFollowingResponse)
-            }
+        val profileFollowingRetrofitInterface =
+            ApplicationClass.sRetrofit.create(ProfileFollowingRetrofitInterface::class.java)
+        profileFollowingRetrofitInterface.getFollowing(userId)
+            .enqueue(object : Callback<ProfileFollowingResponse> {
+                override fun onResponse(
+                    call: Call<ProfileFollowingResponse>,
+                    response: Response<ProfileFollowingResponse>
+                ) {
+                    if (response.body() != null) {
+                        view.onGetFollowingSuccess(response.body() as ProfileFollowingResponse)
+                    } else {
+                        view.onGetFollowingFailure(response.message())
+                    }
+                }
 
-            override fun onFailure(call: Call<ProfileFollowingResponse>, t: Throwable) {
-                view.onGetFollowingFailure(t.message ?: "통신 오류")
-            }
-        })
+                override fun onFailure(call: Call<ProfileFollowingResponse>, t: Throwable) {
+                    view.onGetFollowingFailure(t.message ?: "통신 오류")
+                }
+            })
     }
 }

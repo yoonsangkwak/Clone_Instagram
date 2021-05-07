@@ -1,6 +1,5 @@
 package site.yoonsang.instaclone.src.signup.phone
 
-import android.util.Log
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -19,11 +18,10 @@ class PhoneService(val view: PhoneFragmentView) {
                     call: Call<PhoneSignUpResponse>,
                     response: Response<PhoneSignUpResponse>
                 ) {
-                    Log.d("checkkk", "${response.code()}")
-                    Log.d("checkkk", response.message())
-                    Log.d("checkkk", "${response.body()}")
-                    if (response.isSuccessful) {
+                    if (response.body() != null) {
                         view.onPostPhoneSignUpSuccess(response.body() as PhoneSignUpResponse)
+                    } else {
+                        view.onPostPhoneSignUpFailure(response.message())
                     }
                 }
 

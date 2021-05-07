@@ -10,7 +10,8 @@ import site.yoonsang.instaclone.src.main.home.post.feed.photosEdit.upload.models
 class UploadService(val view: UploadFeedView) {
 
     fun tryPostFeedCreate(postFeedUploadRequest: PostFeedUploadRequest) {
-        val postFeedInterface = ApplicationClass.sRetrofit.create(UploadRetrofitInterface::class.java)
+        val postFeedInterface =
+            ApplicationClass.sRetrofit.create(UploadRetrofitInterface::class.java)
         postFeedInterface.createFeed(
             ApplicationClass.sSharedPreferences.getInt(
                 ApplicationClass.USER_ID,
@@ -21,7 +22,11 @@ class UploadService(val view: UploadFeedView) {
                 call: Call<PostFeedUploadResponse>,
                 response: Response<PostFeedUploadResponse>
             ) {
-                view.onPostFeedCreateSuccess(response.body() as PostFeedUploadResponse)
+                if (response.body() != null) {
+                    view.onPostFeedCreateSuccess(response.body() as PostFeedUploadResponse)
+                } else {
+                    view.onPostFeedCreateFailure(response.message())
+                }
             }
 
             override fun onFailure(call: Call<PostFeedUploadResponse>, t: Throwable) {

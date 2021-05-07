@@ -9,18 +9,24 @@ import site.yoonsang.instaclone.src.main.profile.edit.models.UserInfoResponse
 class ProfileEditService(val view: ProfileEditView) {
 
     fun tryGetUserInfo(userId: Int) {
-        val profileEditRetrofitInterface = ApplicationClass.sRetrofit.create(ProfileEditRetrofitInterface::class.java)
-        profileEditRetrofitInterface.getUserInfo(userId).enqueue(object : Callback<UserInfoResponse> {
-            override fun onResponse(
-                call: Call<UserInfoResponse>,
-                response: Response<UserInfoResponse>
-            ) {
-                view.onGetUserInfoSuccess(response.body() as UserInfoResponse)
-            }
+        val profileEditRetrofitInterface =
+            ApplicationClass.sRetrofit.create(ProfileEditRetrofitInterface::class.java)
+        profileEditRetrofitInterface.getUserInfo(userId)
+            .enqueue(object : Callback<UserInfoResponse> {
+                override fun onResponse(
+                    call: Call<UserInfoResponse>,
+                    response: Response<UserInfoResponse>
+                ) {
+                    if (response.body() != null) {
+                        view.onGetUserInfoSuccess(response.body() as UserInfoResponse)
+                    } else {
+                        view.onGetUserInfoFailure(response.message())
+                    }
+                }
 
-            override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
-                view.onGetUserInfoFailure(t.message ?: "통신 오류")
-            }
-        })
+                override fun onFailure(call: Call<UserInfoResponse>, t: Throwable) {
+                    view.onGetUserInfoFailure(t.message ?: "통신 오류")
+                }
+            })
     }
 }
